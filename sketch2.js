@@ -1,16 +1,17 @@
-function setup() 
-{
-    createCanvas(400, 400);
-}
+new p5((p) => {
+    p.setup = function () {
+      p.createCanvas(400, 400);
+    };
   
-function draw() 
-{
-    noStroke();
-    background(255);
-    fill(255, 0, 0, 50);
-    circle(100,100,90);
-    fill(0, 255, 0, 50);
-    circle(125,120,90);
-    fill(0, 0, 255, 50);
-    circle(75,125,90);
-}
+    p.draw = function () {
+      p.noStroke();
+      p.background(255);
+      p.fill(255, 0, 0, 50);
+      p.circle(100, 100, 90);
+      p.fill(0, 255, 0, 50);
+      p.circle(125, 120, 90);
+      p.fill(0, 0, 255, 50);
+      p.circle(75, 125, 90);
+    };
+  }, 'sketch2');
+  

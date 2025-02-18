@@ -70,7 +70,6 @@ function mousePressed() {
     }
 }
 
-// Sprite Animation Class
 class SpriteAnimation {
     constructor(spriteSheet, startU, startV, duration, flipped = false) {
         this.spriteSheet = spriteSheet;
@@ -103,7 +102,6 @@ class SpriteAnimation {
 }
 let speedMultiplier = 10; // increases with each squish
 
-// Bug Class with Animated Sprites
 class Bug {
     constructor(x, y, spriteSheet) {
         this.x = x;
@@ -117,9 +115,7 @@ class Bug {
         this.dx = random([-1, 1]) * this.speed;
         this.dy = random([-1, 1]) * this.speed;
 
-        // Movement Animation
         this.movementAnimation = new SpriteAnimation(spriteSheet, 0, 0, 4);
-        // Squish Animation (Frames 5-11)
         this.squishAnimation = new SpriteAnimation(spriteSheet, 7, 0, 5);
         this.currentAnimation = this.movementAnimation;
     }

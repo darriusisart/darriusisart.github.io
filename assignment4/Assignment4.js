@@ -177,13 +177,13 @@ function displayTimer() {
 }
 
 function displayStartScreen() {
-    background(50, 150, 200);
+    background(170, 160, 100);
     fill(255);
     textSize(40);
     textFont("Monaco");
     text("Bug Squish Game", width / 2, height / 3);
 
-    fill(200, 0, 122);
+    fill(100, 0, 100);
     rect(width / 2 - 50, height / 2 - 25, 100, 50, 10);
     fill(255);
     textSize(20);

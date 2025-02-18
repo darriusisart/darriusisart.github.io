@@ -101,7 +101,7 @@ class SpriteAnimation {
         }
     }
 }
-let speedMultiplier = 1; // Start at 1, increases with each squish
+let speedMultiplier = 10; // increases with each squish
 
 // Bug Class with Animated Sprites
 class Bug {
@@ -126,16 +126,21 @@ class Bug {
 
     move() {
         if (!this.isSquished) {
-          this.dx = random([-1, 1]) * this.speed * speedMultiplier;
-          this.dy = random([-1, 1]) * this.speed * speedMultiplier;
-
-          this.x += this.dx;
-          this.y += this.dy;
-
-          this.x = constrain(this.x, 0, width - this.size);
-          this.y = constrain(this.y, 0, height - this.size);
+            // Only update direction occasionally to reduce jitter
+            if (frameCount % 30 === 0) { 
+                let angle = random(TWO_PI);
+                this.dx = cos(angle) * this.speed * speedMultiplier;
+                this.dy = sin(angle) * this.speed * speedMultiplier;
+            }
+    
+            this.x += this.dx;
+            this.y += this.dy;
+    
+            this.x = constrain(this.x, 0, width - this.size);
+            this.y = constrain(this.y, 0, height - this.size);
         }
     }
+    
 
     display() {
         let flipped = this.dx < 0; // Flip when moving left
@@ -158,7 +163,7 @@ class Bug {
         this.isSquished = true;
         this.squishTime = millis();
         this.currentAnimation = this.squishAnimation;
-        speedMultiplier += 0.5; 
+        speedMultiplier += 2.5; 
     }
 }
 

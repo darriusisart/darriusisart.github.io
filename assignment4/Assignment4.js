@@ -203,7 +203,7 @@ function displayGameOver() {
     textFont("Monaco");
     text(`Game Over! Score: ${score}`, width / 2, height / 2 - 50);
 
-    fill(0, 155, 0);
+    fill(100, 0, 100);
     rect(width / 2 - 50, height / 2 + 50, 100, 50, 10);
     fill(255);
     textSize(20);

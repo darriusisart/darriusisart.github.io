@@ -182,7 +182,7 @@ function displayTimer() {
 }
 
 function displayStartScreen() {
-    background(170, 160, 100);
+    background(170, 161, 100);
     fill(255);
     textSize(40);
     textFont("Monaco");

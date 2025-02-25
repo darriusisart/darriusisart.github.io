@@ -59,7 +59,7 @@ function draw() {
   textAlign(CENTER);
   fill(0);
   
-  text("Delay Time: " + delayTimeSlider.value(), width / 2 - 180, 140);
+  text("Delay Time: " + delayTimeSlider.value(), width / 2 - 140, 140);
   text("Feedback: " + feedbackSlider.value(), width / 2 + 90, 140);
   text("Distortion: " + distortionAmountSlider.value(), width / 2 - 10, 210);
   text("Reverb Wetness: " + wetSlider.value(), width / 2 - 10, 280);

@@ -4,9 +4,11 @@ let timeLeft = 30;
 let gameOver = false;
 let gameStarted = false;
 let bugSpriteSheet;
+let squishSound
 
 function preload() {
     bugSpriteSheet = loadImage('images/bug_spritesheet.png');   
+   // squishSound = loadSound('images/')
 }
 
 function setup() {

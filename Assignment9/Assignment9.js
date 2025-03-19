@@ -5,6 +5,7 @@ let weight = 3;
 let lines = [];
 let currentLine = [];
 let drawingEnabled = false;
+let audioButton;
 
 // Sound variables
 let synths = {};
@@ -37,13 +38,43 @@ function preload()
     img3 = loadImage('images/undo.jpeg'); 
 }
 
-async function setup() 
+function setup() 
 {
     createCanvas(400, 400);
-    background(220);        //move here so it doesnt reload each frame, stopping our drawn lives to staying
+    background(220);
     angleMode(DEGREES);
     
-    // Initialize audio
+    // Create start audio button
+    audioButton = createButton('Start Audio');
+    audioButton.position(width/2 - 60, height/2 - 20); // Center the button
+    audioButton.mousePressed(initializeAudio);
+    audioButton.style('background-color', '#4CAF50');
+    audioButton.style('color', 'white');
+    audioButton.style('border', 'none');
+    audioButton.style('padding', '15px 30px');
+    audioButton.style('border-radius', '8px');
+    audioButton.style('cursor', 'pointer');
+    audioButton.style('font-size', '16px');
+    audioButton.style('font-weight', 'bold');
+    audioButton.style('box-shadow', '0 2px 5px rgba(0,0,0,0.2)');
+    audioButton.style('transition', 'all 0.3s ease');
+    
+    // Add hover effect
+    audioButton.mouseOver(() => {
+        audioButton.style('background-color', '#45a049');
+        audioButton.style('box-shadow', '0 4px 8px rgba(0,0,0,0.3)');
+    });
+    
+    audioButton.mouseOut(() => {
+        audioButton.style('background-color', '#4CAF50');
+        audioButton.style('box-shadow', '0 2px 5px rgba(0,0,0,0.2)');
+    });
+}
+
+async function initializeAudio() 
+{
+    if (audioInitialized) return;
+    
     try {
         await Tone.start();
         console.log("Audio context started");
@@ -110,15 +141,29 @@ async function setup()
             synths.bass.triggerAttackRelease(bassNote, "4n", time);
         }, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "4n");
 
-        // Start the sequence but don't start transport yet
+        // Start the sequence
         jazzSequence.start();
+        Tone.Transport.start();
         Tone.Transport.bpm.value = 120;
-        isJazzPlaying = false;
+        isJazzPlaying = true;
 
         audioInitialized = true;
         console.log("Audio initialized successfully");
+        
+        // Update button appearance
+        audioButton.html('Audio Started');
+        audioButton.style('background-color', '#666');
+        audioButton.style('box-shadow', 'none');
+        audioButton.attribute('disabled', '');
+        
+        // Remove hover effects
+        audioButton.mouseOver(() => {});
+        audioButton.mouseOut(() => {});
     } catch (error) {
         console.error("Error initializing audio:", error);
+        audioButton.html('Error Starting Audio');
+        audioButton.style('background-color', '#f44336');
+        audioButton.style('box-shadow', 'none');
     }
 }
 
@@ -215,76 +260,66 @@ function draw()
 
 function mousePressed()
 {
-    //outline and color change
+    //outline and color change              main thing, you don't need to change the line drawn here just the color so they are abrstracted from each other and can be reused better
     if(mouseX <= 20 && mouseY <= 20)
     {
         stroke('red');
         strokeWeight(weight);
         playColorSound('red');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 20 && mouseY <= 40)
     {
         stroke('orange');
         strokeWeight(weight);
         playColorSound('orange');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 40 && mouseY <= 60)
     {
         stroke('yellow');
         strokeWeight(weight);
         playColorSound('yellow');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 60 && mouseY <= 80)
     {
         stroke('green');
         strokeWeight(weight);
         playColorSound('green');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 80 && mouseY <= 100)
     {
         stroke('cyan');
         strokeWeight(weight);
         playColorSound('cyan');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 100 && mouseY <= 120)
     {
         stroke('blue');
         strokeWeight(weight);
         playColorSound('blue');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 120 && mouseY <= 140)
     {
         stroke('magenta');
         strokeWeight(weight);
         playColorSound('magenta');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 140 && mouseY <= 160)
     {
         stroke('brown');
         strokeWeight(weight);
         playColorSound('brown');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 160 && mouseY <= 180)
     {
         stroke('white');
         strokeWeight(weight);
         playColorSound('white');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 180 && mouseY <= 200)
     {
         stroke('black');
         strokeWeight(weight);
         playColorSound('black');
-        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 200 && mouseY <= 220)
     {
@@ -300,6 +335,19 @@ function mousePressed()
     {
         drawingEnabled = !drawingEnabled;
     }    
+    // //Undo   
+    // if(mouseX <= 20 && mouseY > 245 && mouseY <= 260)                                                           //next follow hover then when pressed draw color how? mouseDragged is how
+    // {
+    //     if (lines.length > 0) 
+    //     {
+    //         currentLine = lines.pop(); // Move last drawn line back to currentLine
+    //     }
+    // }
+    // //Redo
+    // if(mouseX <= 20 && mouseY > 270 && mouseY <= 295)                                                          
+    // {
+
+    // }
 
     // Toggle jazz music
     if(mouseX <= 20 && mouseY > 265 && mouseY <= 280)
@@ -311,14 +359,6 @@ function mousePressed()
             Tone.Transport.start();
             isJazzPlaying = true;
         }
-    }
-}
-
-// Helper function to start jazz if not already playing
-function startJazzIfNotPlaying() {
-    if (!isJazzPlaying) {
-        Tone.Transport.start();
-        isJazzPlaying = true;
     }
 }
 

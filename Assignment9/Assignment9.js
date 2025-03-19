@@ -110,7 +110,7 @@ async function setup()
             synths.bass.triggerAttackRelease(bassNote, "4n", time);
         }, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "4n");
 
-        // Start the sequence but don't start the transport yet
+        // Start the sequence but don't start transport yet
         jazzSequence.start();
         Tone.Transport.bpm.value = 120;
         isJazzPlaying = false;
@@ -119,13 +119,6 @@ async function setup()
         console.log("Audio initialized successfully");
     } catch (error) {
         console.error("Error initializing audio:", error);
-    }
-}
-
-function startJazzMusic() {
-    if (!isJazzPlaying) {
-        Tone.Transport.start();
-        isJazzPlaying = true;
     }
 }
 
@@ -147,7 +140,6 @@ function playColorSound(color) {
 
     if (synths[color] && noteMap[color]) {
         synths[color].triggerAttackRelease(noteMap[color], "8n");
-        startJazzMusic(); // Start music when color is selected
     }
 }
 
@@ -223,66 +215,76 @@ function draw()
 
 function mousePressed()
 {
-    //outline and color change              main thing, you don't need to change the line drawn here just the color so they are abrstracted from each other and can be reused better
+    //outline and color change
     if(mouseX <= 20 && mouseY <= 20)
     {
         stroke('red');
         strokeWeight(weight);
         playColorSound('red');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 20 && mouseY <= 40)
     {
         stroke('orange');
         strokeWeight(weight);
         playColorSound('orange');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 40 && mouseY <= 60)
     {
         stroke('yellow');
         strokeWeight(weight);
         playColorSound('yellow');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 60 && mouseY <= 80)
     {
         stroke('green');
         strokeWeight(weight);
         playColorSound('green');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 80 && mouseY <= 100)
     {
         stroke('cyan');
         strokeWeight(weight);
         playColorSound('cyan');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 100 && mouseY <= 120)
     {
         stroke('blue');
         strokeWeight(weight);
         playColorSound('blue');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 120 && mouseY <= 140)
     {
         stroke('magenta');
         strokeWeight(weight);
         playColorSound('magenta');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 140 && mouseY <= 160)
     {
         stroke('brown');
         strokeWeight(weight);
         playColorSound('brown');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 160 && mouseY <= 180)
     {
         stroke('white');
         strokeWeight(weight);
         playColorSound('white');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 180 && mouseY <= 200)
     {
         stroke('black');
         strokeWeight(weight);
         playColorSound('black');
+        startJazzIfNotPlaying();
     }
     if(mouseX <= 20 && mouseY > 200 && mouseY <= 220)
     {
@@ -298,19 +300,6 @@ function mousePressed()
     {
         drawingEnabled = !drawingEnabled;
     }    
-    // //Undo   
-    // if(mouseX <= 20 && mouseY > 245 && mouseY <= 260)                                                           //next follow hover then when pressed draw color how? mouseDragged is how
-    // {
-    //     if (lines.length > 0) 
-    //     {
-    //         currentLine = lines.pop(); // Move last drawn line back to currentLine
-    //     }
-    // }
-    // //Redo
-    // if(mouseX <= 20 && mouseY > 270 && mouseY <= 295)                                                          
-    // {
-
-    // }
 
     // Toggle jazz music
     if(mouseX <= 20 && mouseY > 265 && mouseY <= 280)
@@ -325,12 +314,17 @@ function mousePressed()
     }
 }
 
+// Helper function to start jazz if not already playing
+function startJazzIfNotPlaying() {
+    if (!isJazzPlaying) {
+        Tone.Transport.start();
+        isJazzPlaying = true;
+    }
+}
+
 function mouseDragged()
 {
     if (!audioInitialized || !drawingSynth) return;
-
-    // Start jazz music on first draw
-    startJazzMusic();
 
     // Calculate drawing speed
     const currentTime = millis();

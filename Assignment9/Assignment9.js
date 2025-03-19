@@ -110,16 +110,22 @@ async function setup()
             synths.bass.triggerAttackRelease(bassNote, "4n", time);
         }, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "4n");
 
-        // Start the sequence
+        // Start the sequence but don't start the transport yet
         jazzSequence.start();
-        Tone.Transport.start();
         Tone.Transport.bpm.value = 120;
-        isJazzPlaying = true;
+        isJazzPlaying = false;
 
         audioInitialized = true;
         console.log("Audio initialized successfully");
     } catch (error) {
         console.error("Error initializing audio:", error);
+    }
+}
+
+function startJazzMusic() {
+    if (!isJazzPlaying) {
+        Tone.Transport.start();
+        isJazzPlaying = true;
     }
 }
 
@@ -141,6 +147,7 @@ function playColorSound(color) {
 
     if (synths[color] && noteMap[color]) {
         synths[color].triggerAttackRelease(noteMap[color], "8n");
+        startJazzMusic(); // Start music when color is selected
     }
 }
 
@@ -321,6 +328,9 @@ function mousePressed()
 function mouseDragged()
 {
     if (!audioInitialized || !drawingSynth) return;
+
+    // Start jazz music on first draw
+    startJazzMusic();
 
     // Calculate drawing speed
     const currentTime = millis();

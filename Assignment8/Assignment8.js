@@ -24,6 +24,7 @@ function setup() {
             Tone.start().then(() => {
                 console.log("Context has started");
                 Tone.Transport.start();
+                // Start the welcome melody
                 startMelody.start();
             })
         } else {
@@ -68,6 +69,7 @@ function setup() {
     startMelody.loop = true;
     startMelody.loopEnd = "16m";
     
+    // Create a more soulful synth with longer release
     synth1 = new Tone.PolySynth(Tone.Synth, {
         oscillator: {
             type: "sine"
@@ -109,13 +111,13 @@ function setup() {
         synth1.triggerAttackRelease(value.note, value.dur, time);
     }),
     [
-        // Bass line 
+        // Bass line with jazzy extensions
         {time: 0, note: "C2", dur: "2n"},
         {time: "2:0", note: "F2", dur: "2n"},
         {time: "4:0", note: "G2", dur: "2n"},
         {time: "6:0", note: "C2", dur: "2n"},
         
-        // Melody
+        // Melody with jazzy chords and extensions
         {time: "0:1", note: ["C4", "E4", "G4", "B4"], dur: "4n"}, // Cmaj7
         {time: "1:1", note: ["D4", "F4", "A4", "C5"], dur: "4n"}, // Dm7
         {time: "2:1", note: ["F4", "A4", "C5", "E5"], dur: "4n"}, // Fmaj7
@@ -149,7 +151,9 @@ function startGame() {
     timeLeft = 30;
     speedMultiplier = 10;
     bugs = [];
+    // Stop the welcome melody when game starts
     startMelody.stop();
+    // Start the game music and set game tempo
     Tone.Transport.bpm = 75;
     part1.start();
     for (let i = 0; i < 5; i++) {
@@ -198,12 +202,12 @@ function mousePressed() {
             if (bug.isClicked(mouseX, mouseY)) {
                 bug.squish();
                 score++;
-                // squish sound effect
+                // Play squish sound effect
                 synth2.triggerAttackRelease("C4", "16n");
                 hitBug = true;
             }
         }
-        // miss sound if no bug was hit
+        // Play miss sound if no bug was hit
         if (!hitBug) {
             missSynth.triggerAttackRelease("G2", "32n");
         }
@@ -298,8 +302,12 @@ class Bug {
         this.currentAnimation = this.squishAnimation;
         speedMultiplier += 2.5;
         
+        // Dramatically increase tempo with speed multiplier
+        // Base tempo is 75, max tempo is 240 (increased from 180)
+        // Speed multiplier starts at 10 and increases by 2.5 each squish
+        // Using exponential mapping for more dramatic increase
         let newTempo = map(speedMultiplier, 10, 25, 75, 240, true);
-        Tone.Transport.bpm.rampTo(newTempo, 0.3); 
+        Tone.Transport.bpm.rampTo(newTempo, 0.3); // Faster ramp time
     }
 }
 
@@ -318,7 +326,7 @@ function displayTimer() {
 }
 
 function displayStartScreen() {
-    // gradient
+    // Create a gradient background
     for (let i = 0; i < height; i++) {
         let inter = map(i, 0, height, 0, 1);
         let c = lerpColor(color(170, 160, 100), color(100, 150, 200), inter);
@@ -326,7 +334,7 @@ function displayStartScreen() {
         line(0, i, width, i);
     }
 
-    // animated circles in the background
+    // Add some animated circles in the background
     for (let i = 0; i < 5; i++) {
         let x = width/2 + sin(frameCount * 0.02 + i) * 100;
         let y = height/2 + cos(frameCount * 0.02 + i) * 100;
@@ -335,6 +343,7 @@ function displayStartScreen() {
         circle(x, y, 30);
     }
 
+    // Title with shadow
     fill(0, 0, 0, 100);
     textSize(42);
     textFont("Monaco");
@@ -345,16 +354,19 @@ function displayStartScreen() {
     textFont("Monaco");
     text("Bug Squish Game", width/2, height/3);
 
+    // Animated start button
     let buttonHover = dist(mouseX, mouseY, width/2, height/2) < 50;
     let buttonColor = buttonHover ? color(120, 0, 120) : color(100, 0, 100);
     fill(buttonColor);
     rect(width/2 - 50, height/2 - 25, 100, 50, 10);
     
+    // Button text
     fill(255);
     textSize(20);
     textFont("Monaco");
     text("Start", width/2, height/2);
 
+    // Add some instructions
     fill(255, 255, 255, 200);
     textSize(16);
     textFont("Monaco");

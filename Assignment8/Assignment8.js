@@ -1,164 +1,151 @@
+// Debug information
+console.log("Script starting...");
+console.log("Tone.js available:", typeof Tone !== "undefined");
+console.log("p5.js available:", typeof p5 !== "undefined");
+
 let bugs = [];
 let score = 0;
 let timeLeft = 30;
 let gameOver = false;
 let gameStarted = false;
 let bugSpriteSheet;
-let button, part1, synth1, seq1, synth2, noise1, filt, noiseEnv, centerFreq, panner, gain1, missSynth, startMelody;
+let button, part1, synth1, synth2, missSynth, startMelodySynth, startMelodyPart;
 let dragging = false;
 let speedMultiplier = 10;
+let audioInitialized = false;
+
+console.log("Tone.js loaded:", typeof Tone !== "undefined");
 
 function preload() {
     bugSpriteSheet = loadImage('images/bug_spritesheet.png');
 }
 
-function setup() {
+async function setup() {
     createCanvas(400, 400);
     textAlign(CENTER, CENTER);
     
-    // Sound setup
     button = createElement("button", "Start Audio");
     button.position(0, 0);
-    button.mousePressed(() => {
-        if (Tone.context.state !== "running") {
-            Tone.start().then(() => {
-                console.log("Context has started");
-                Tone.Transport.start();
-                // Start the welcome melody
-                startMelody.start();
-            })
-        } else {
-            Tone.Transport.start();
-            startMelody.start();
-        }
-    });
-    
-    Tone.Transport.timeSignature = [4, 4];
-    Tone.Transport.bpm = 60;
-    
-    // Create a gentler synth for the start melody
-    startMelody = new Tone.PolySynth(Tone.Synth, {
-        oscillator: {
-            type: "sine"
-        },
-        envelope: {
-            attack: 0.5,
-            decay: 0.8,
-            sustain: 0.4,
-            release: 1.0
-        },
-        volume: -10
-    }).toDestination();
+    button.mousePressed(initializeAudio);
+}
 
-    // Create the welcome melody sequence
-    startMelody = new Tone.Part(((time, value) => {
-        startMelody.triggerAttackRelease(value.note, value.dur, time);
-    }),
-    [
-        // Calmer, more ambient melody
-        {time: 0, note: "C4", dur: "2n"},
-        {time: "2:0", note: "E4", dur: "2n"},
-        {time: "4:0", note: "G4", dur: "2n"},
-        {time: "6:0", note: "C5", dur: "2n"},
-        {time: "8:0", note: "G4", dur: "2n"},
-        {time: "10:0", note: "E4", dur: "2n"},
-        {time: "12:0", note: "C4", dur: "2n"},
-        {time: "14:0", note: "C4", dur: "2n"},
-    ]
-    ).start();
-    startMelody.loop = true;
-    startMelody.loopEnd = "16m";
-    
-    // Create a more soulful synth with longer release
-    synth1 = new Tone.PolySynth(Tone.Synth, {
-        oscillator: {
-            type: "sine"
-        },
-        envelope: {
-            attack: 0.1,
-            decay: 0.2,
-            sustain: 0.8,
-            release: 0.5
-        }
-    }).toDestination();
-    
-    synth2 = new Tone.Synth({
-        oscillator: {
-            type: "sine"
-        },
-        envelope: {
-            attack: 0.05,
-            decay: 0.1,
-            sustain: 0.6,
-            release: 0.3
-        }
-    }).toDestination();
-
-    // Create a synth for miss sounds
-    missSynth = new Tone.Synth({
-        oscillator: {
-            type: "triangle"
-        },
-        envelope: {
-            attack: 0.02,
-            decay: 0.1,
-            sustain: 0.2,
-            release: 0.2
-        }
-    }).toDestination();
-    
-    part1 = new Tone.Part(((time, value) => {
-        synth1.triggerAttackRelease(value.note, value.dur, time);
-    }),
-    [
-        // Bass line with jazzy extensions
-        {time: 0, note: "C2", dur: "2n"},
-        {time: "2:0", note: "F2", dur: "2n"},
-        {time: "4:0", note: "G2", dur: "2n"},
-        {time: "6:0", note: "C2", dur: "2n"},
+async function initializeAudio() {
+    try {
+        await Tone.start();
+        console.log("Context has started");
         
-        // Melody with jazzy chords and extensions
-        {time: "0:1", note: ["C4", "E4", "G4", "B4"], dur: "4n"}, // Cmaj7
-        {time: "1:1", note: ["D4", "F4", "A4", "C5"], dur: "4n"}, // Dm7
-        {time: "2:1", note: ["F4", "A4", "C5", "E5"], dur: "4n"}, // Fmaj7
-        {time: "3:1", note: ["G4", "B4", "D5", "F5"], dur: "4n"}, // G7
-        {time: "4:1", note: ["C4", "E4", "G4", "B4"], dur: "4n"}, // Cmaj7
-        {time: "5:1", note: ["D4", "F4", "A4", "C5"], dur: "4n"}, // Dm7
-        {time: "6:1", note: ["F4", "A4", "C5", "E5"], dur: "4n"}, // Fmaj7
-        {time: "7:1", note: ["G4", "B4", "D5", "F5"], dur: "4n"}, // G7
-    ]
-    ).start();
-    part1.loop = true;
-    part1.loopEnd = "8m";
-    
-    gain1 = new Tone.Gain().toDestination()
-    panner = new Tone.Panner(0).connect(gain1);
-    noiseEnv = new Tone.AmplitudeEnvelope({
-        attack: 0.3,
-        decay: 0.3,
-        sustain: 1,
-        release: 0.2
-    }).connect(panner);
-    centerFreq = map(height / 2, 0, height, 5000, 100, true);
-    filt = new Tone.Filter(centerFreq, "lowpass").connect(noiseEnv);
-    noise1 = new Tone.Noise("white").start().connect(filt);
+        startMelodySynth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "sine" },
+            envelope: {
+                attack: 0.5,
+                decay: 0.8,
+                sustain: 0.4,
+                release: 1.0
+            },
+            volume: -10
+        }).toDestination();
+
+        startMelodyPart = new Tone.Part(((time, value) => {
+            startMelodySynth.triggerAttackRelease(value.note, value.dur, time);
+        }),
+        [
+            {time: 0, note: "C4", dur: "2n"},
+            {time: "2:0", note: "E4", dur: "2n"},
+            {time: "4:0", note: "G4", dur: "2n"},
+            {time: "6:0", note: "C5", dur: "2n"},
+            {time: "8:0", note: "G4", dur: "2n"},
+            {time: "10:0", note: "E4", dur: "2n"},
+            {time: "12:0", note: "C4", dur: "2n"},
+            {time: "14:0", note: "C4", dur: "2n"},
+        ]
+        ).start();
+        startMelodyPart.loop = true;
+        startMelodyPart.loopEnd = "16m";
+
+        synth1 = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: "sine" },
+            envelope: {
+                attack: 0.1,
+                decay: 0.2,
+                sustain: 0.8,
+                release: 0.5
+            }
+        }).toDestination();
+        
+        synth2 = new Tone.Synth({
+            oscillator: { type: "sine" },
+            envelope: {
+                attack: 0.05,
+                decay: 0.1,
+                sustain: 0.6,
+                release: 0.3
+            }
+        }).toDestination();
+
+        missSynth = new Tone.Synth({
+            oscillator: { type: "triangle" },
+            envelope: {
+                attack: 0.02,
+                decay: 0.1,
+                sustain: 0.2,
+                release: 0.2
+            }
+        }).toDestination();
+
+        Tone.Transport.timeSignature = [4, 4];
+        Tone.Transport.bpm = 60;
+        Tone.Transport.start();
+
+        part1 = new Tone.Part(((time, value) => {
+            synth1.triggerAttackRelease(value.note, value.dur, time);
+        }),
+        [
+            {time: 0, note: "C2", dur: "2n"},
+            {time: "2:0", note: "F2", dur: "2n"},
+            {time: "4:0", note: "G2", dur: "2n"},
+            {time: "6:0", note: "C2", dur: "2n"},
+            {time: "0:1", note: ["C4", "E4", "G4", "B4"], dur: "4n"},
+            {time: "1:1", note: ["D4", "F4", "A4", "C5"], dur: "4n"},
+            {time: "2:1", note: ["F4", "A4", "C5", "E5"], dur: "4n"},
+            {time: "3:1", note: ["G4", "B4", "D5", "F5"], dur: "4n"},
+            {time: "4:1", note: ["C4", "E4", "G4", "B4"], dur: "4n"},
+            {time: "5:1", note: ["D4", "F4", "A4", "C5"], dur: "4n"},
+            {time: "6:1", note: ["F4", "A4", "C5", "E5"], dur: "4n"},
+            {time: "7:1", note: ["G4", "B4", "D5", "F5"], dur: "4n"},
+        ]
+        ).start();
+        part1.loop = true;
+        part1.loopEnd = "8m";
+
+        audioInitialized = true;
+        button.remove();
+        console.log("Audio initialized successfully");
+    } catch (error) {
+        console.error("Error initializing audio:", error);
+    }
 }
 
 function startGame() {
+    if (!audioInitialized) {
+        console.log("Please initialize audio first");
+        return;
+    }
+    
     gameStarted = true;
     gameOver = false;
     score = 0;
     timeLeft = 30;
     speedMultiplier = 10;
     bugs = [];
-    // Stop the welcome melody when game starts
-    startMelody.stop();
-    // Start the game music and set game tempo
+    
+    startMelodyPart.stop();
     Tone.Transport.bpm = 75;
     part1.start();
+    
     for (let i = 0; i < 5; i++) {
         bugs.push(new Bug(random(width), random(height), bugSpriteSheet));
     }
+    
     setInterval(() => {
         if (timeLeft > 0) {
             timeLeft--;
@@ -202,12 +189,10 @@ function mousePressed() {
             if (bug.isClicked(mouseX, mouseY)) {
                 bug.squish();
                 score++;
-                // Play squish sound effect
                 synth2.triggerAttackRelease("C4", "16n");
                 hitBug = true;
             }
         }
-        // Play miss sound if no bug was hit
         if (!hitBug) {
             missSynth.triggerAttackRelease("G2", "32n");
         }
@@ -302,12 +287,8 @@ class Bug {
         this.currentAnimation = this.squishAnimation;
         speedMultiplier += 2.5;
         
-        // Dramatically increase tempo with speed multiplier
-        // Base tempo is 75, max tempo is 240 (increased from 180)
-        // Speed multiplier starts at 10 and increases by 2.5 each squish
-        // Using exponential mapping for more dramatic increase
         let newTempo = map(speedMultiplier, 10, 25, 75, 240, true);
-        Tone.Transport.bpm.rampTo(newTempo, 0.3); // Faster ramp time
+        Tone.Transport.bpm.rampTo(newTempo, 0.3); 
     }
 }
 
@@ -326,7 +307,7 @@ function displayTimer() {
 }
 
 function displayStartScreen() {
-    // Create a gradient background
+    // Gradient background
     for (let i = 0; i < height; i++) {
         let inter = map(i, 0, height, 0, 1);
         let c = lerpColor(color(170, 160, 100), color(100, 150, 200), inter);
@@ -334,7 +315,7 @@ function displayStartScreen() {
         line(0, i, width, i);
     }
 
-    // Add some animated circles in the background
+    // Animated circles in the background
     for (let i = 0; i < 5; i++) {
         let x = width/2 + sin(frameCount * 0.02 + i) * 100;
         let y = height/2 + cos(frameCount * 0.02 + i) * 100;
@@ -343,7 +324,6 @@ function displayStartScreen() {
         circle(x, y, 30);
     }
 
-    // Title with shadow
     fill(0, 0, 0, 100);
     textSize(42);
     textFont("Monaco");
@@ -360,13 +340,11 @@ function displayStartScreen() {
     fill(buttonColor);
     rect(width/2 - 50, height/2 - 25, 100, 50, 10);
     
-    // Button text
     fill(255);
     textSize(20);
     textFont("Monaco");
     text("Start", width/2, height/2);
 
-    // Add some instructions
     fill(255, 255, 255, 200);
     textSize(16);
     textFont("Monaco");

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Project: Arduino + p5.js Drum Machine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Final Project</h1>
+    <h2>Arduino + p5.js Drum Machine</h2>
+  </header>
+
+  <main>
+    <section>
+      <h3>Project Overview</h3>
+      <p>This project combines Arduino and p5.js to create a browser-based drum machine. Users can trigger drum sounds with buttons, control tempo with a joystick, play along a simple chord progression, and record/playback drum loops. The Arduino communicates with the browser using the Web Serial API.</p>
+    </section>
+
+    <section>
+      <h3>Key Features</h3>
+      <ul>
+        <li>4-drum layout (Kick, Snare, Hi-hat, Clap), controlled from arduino buttons</li>
+        <li>Joystick-controlled tempo, able to lock/unlock in place</li>
+        <li>Loop recording and playback</li>
+        <li>Visual feedback on the canvas</li>
+        <li>Optional 4-chord progression accompaniment</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>How It Works</h3>
+      <p>The p5.js sketch listens to inputs from the Arduino over serial. Drums are triggered by digital button pins, tempo is controlled with analog joystick inputs, and pressing the joystick button locks the tempo. The metronome is shown via a red dot appearing in the middle of the screen every beat in 4/4 timing. Users can record a short pattern and loop it back.</p>
+    </section>
+
+    <section>
+      <h3>Schematics & Hardware</h3>
+      <ul>
+        <li>Joystick module (X: A1, Y: A2, Button: D7)</li>
+        <li>4 drum buttons (D2–D5)</li>
+        <li>Passive Buzzer for direct sound from arduino(D6), optional</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Demo Video</h3>
+      <video controls width="640">
+        <source src="media/IMG_5012.mp4" type="video/mp4">
+      </video>
+    </section>
+
+    <section>
+      <h3>Images</h3>
+      <img src="media/drummachine.png" alt="Drum machine interface" width="1000">
+      <img src="media/IMG_5014.png" alt="Arduino setup" width="400">
+      
+    </section>
+
+    <section>
+      <h3>Future Development</h3>
+      <ul>
+        <li>Add quantization to improve timing accuracy in loops</li>
+        <li>Add ability to add your own sounds for the drums</li>
+        <li>Add support for more diverse chord progressions</li>
+        <li>Include volume control for individual drums</li>
+        <li>Extend to support MIDI out or external synths</li>
+        <li>Create user profiles to save patterns</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Credits</h3>
+      <p>Designed and developed by Darrius Anthony(Spring 2025, LSU)</p>
+    </section>
+  </main>
+
+</body>
+</html>

@@ -15,8 +15,11 @@
   <main>
     <section>
       <h3>Project Overview</h3>
-      <p>This project combines Arduino and p5.js to create a browser-based drum machine. Users can trigger drum sounds with buttons, control tempo with a joystick, play along a simple chord progression, and record/playback drum loops. The Arduino communicates with the browser using the Web Serial API.</p>
+      <p>This project combines Arduino and p5.js to create an interactive, browser-based drum machine that blends physical hardware controls with digital sound synthesis. Users interact with real-world inputs (buttons and a joystick) connected to an Arduino, which communicates with the browser in real-time using the Web Serial API. The interface is built with p5.js for visuals and Tone.js for sound, synthesis, and timing.</p>
+      <p>Each of the four drum buttons triggers a different sound: kick, snare, hi-hat, or clap. A joystick is used to adjust the tempo, and lock that tempo in via the joystick's push button. The tempo controls a built-in metronome that provides visual feedback with a flashing red dot at center screen, keeping the user in time.</p>    
+      <p>One of the core features of the project is loop recording: users can record a short rhythmic pattern and have it loop continuously, opening up the possibility of layering and performance. An optional backdrop plays a four-chord progression, making it easier to play along and stay in key. The project also optionally includes a passive buzzer connected to the Arduino for hardware-generated sound, allowing for audio feedback both from the Arduino and the browser.</p>
     </section>
+    
 
     <section>
       <h3>Key Features</h3>
@@ -48,14 +51,23 @@
       <video controls width="640">
         <source src="media/IMG_5012.mp4" type="video/mp4">
       </video>
+      <p>If the video doesn’t play, <a href="media/IMG_5012.mp4" download>click here to download it</a>.</p>
     </section>
 
     <section>
       <h3>Images</h3>
-      <img src="media/drummachine.png" alt="Drum machine interface" width="1000">
-      <img src="media/IMG_5014.png" alt="Arduino setup" width="400">
-      
+      <figure>
+        <img src="media/drummachine.png" alt="Drum machine interface" width="1000">
+        <figcaption>The browser-based drum machine interface built with p5.js, showing visual feedback for each drum trigger.</figcaption>
+        <figcaption> First connect to your Arduino, then start the audio, and start to play! You can start the metronome to help play on beat and adjust the tempo using the joystick and locking it in by pressing it down. You can record and playback yoour loop and also play with some backing chords to inspire your creativity!</figcaption>
+      </figure>
+    
+      <figure>
+        <img src="media/IMG_5014.png" alt="Arduino setup" width="400">
+        <figcaption>The physical Arduino setup: buttons connected for drums, joystick for tempo control, and optional buzzer for hardware sound output. (All connected using the breadboards ground and 5v on the right side of this picture)</figcaption>
+      </figure>
     </section>
+    
 
     <section>
       <h3>Future Development</h3>
